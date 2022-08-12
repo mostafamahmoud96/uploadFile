@@ -69,7 +69,7 @@ class FileController extends Controller
                 'extension' => $extension,
             ]);
 
-            return redirect('/upload');
+            return redirect('/myuploads');
         }
     }
 
