@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
@@ -28,11 +27,11 @@ class FileController extends Controller
         request()->validate(
             [
                 'name' => 'required',
-                'file' => 'required|max:1000',//a required, max 10000kb, doc or docx file
+                'file' => 'required',
             ],
             [
                 'file.required' => 'You have to choose the file!',
-                'name.required' => 'You have to choose valid file name!'
+                'name.required' => 'You have to choose valid file name!',
             ]
         );
 
@@ -55,7 +54,6 @@ class FileController extends Controller
         file_put_contents($path . '/' . $name, $encrypted_code);
 
         // save in database
-
         if ($request->file()) {
             $file = $request->file;
             $size = filesize($path);
@@ -73,7 +71,7 @@ class FileController extends Controller
         }
     }
 
-    public function download($id)
+    public function downloadEnc($id)
     {
         $file_name = Upload::find($id)->name;
         $file_path = auth()->user()->id . '/' . $file_name;
@@ -89,7 +87,26 @@ class FileController extends Controller
 
         file_put_contents($downloadPath, $originalData);
 
-        return response()->download($downloadPath, $file_name)->deleteFileAfterSend(true);;
+        return response()->download($downloadPath, $file_name)->deleteFileAfterSend(true);
+
+    }
+    public function downloadDec($id)
+    {
+        $file_name = Upload::find($id)->name;
+        $file_path = auth()->user()->id . '/' . $file_name;
+
+        $fileContent = file_get_contents(storage_path('tmp/uploads/' . $file_path));
+        // $originalData = $this->my_decrypt($fileContent, $this->key);
+
+        $downloadPath = storage_path('tmp/downloads/' . $file_name);
+
+        if (!file_exists(storage_path('tmp/downloads/'))) {
+            mkdir(storage_path('tmp/downloads/'), 0777, true);
+        }
+
+        file_put_contents($downloadPath, $fileContent);
+
+        return response()->download($downloadPath, $file_name)->deleteFileAfterSend(true);
 
     }
 
@@ -98,6 +115,8 @@ class FileController extends Controller
         $encryption_key = base64_decode($key);
         $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
         $encrypted = openssl_encrypt($data, 'aes-256-cbc', $encryption_key, 0, $iv);
+        //Encodes data with MIME base64
+        // dd($encrypted);
         return base64_encode($encrypted . '::' . $iv);
     }
 

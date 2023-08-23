@@ -37,8 +37,13 @@
                                 <td class="py-4 px-6">{{ $upload->size }}</td>
                                 <td class="py-4 px-6">{{ $upload->extension }}</td>
                                 <td class="py-4 px-6"><a class="text-red-600	"
-                                        href="{{ route('file_download', $upload->id) }}">Download</a>
+                                        href="{{ route('file_download_enc', $upload->id) }}">Download Decrypted / </a>
+                                        <a class="text-red-600 btn"
+                                    href="{{ route('file_download_dec', $upload->id) }}">Download Encrypted</a>
                                 </td>
+                                {{-- <td class="py-4 px-6"><a class="text-red-600	"
+                                    href="{{ route('file_download_dec', $upload->id) }}">Download Enc</a>
+                            </td> --}}
                             </tr>
                         @endforeach
                     </tbody>

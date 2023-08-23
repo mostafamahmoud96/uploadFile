@@ -16,7 +16,10 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js" ></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
+
 </head>
 
 <body class="font-sans antialiased">
